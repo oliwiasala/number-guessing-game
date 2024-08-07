@@ -1,1 +1,5 @@
-A simple Java program that generates a number between 0 and 100. User has to guess the right number by entering a number to the console. The program gives the user feedback if the number is too high or too low.
+Rules of the Number Guessing Game:
+- program generates a random number from 0 to 100,
+- user is asked to enter their guess into the console,
+- program tells the user if their guess is too high or too low,
+- the game continues until the user guesses the right number.  
