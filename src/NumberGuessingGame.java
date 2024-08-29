@@ -1,45 +1,94 @@
 import java.util.Scanner;
 
 public class NumberGuessingGame {
-    private int randomNumber;
-    private int userNumber;
+    private int targetNumber;          // The number to be guessed
+    private int numberOfAttempts;      // The count of user attempts
+    private int lowerBound;            // The lower bound of the guessing range
+    private int upperBound;            // The upper bound of the guessing range
 
-    private void generateRandomNumber() {
-       randomNumber = (int) (Math.random() * 101);
-    }
-
-    public void play() {
-        System.out.println("Welcome to Number Guessing Game! \nYou have to guess the number between 0 and 100.");
+    public void startGame() {
         Scanner scanner = new Scanner(System.in);
-        generateRandomNumber();
+        System.out.println("Welcome to the Number Guessing Game! Please enter the range of numbers within which to guess.");
 
-       do {
-           System.out.println("Enter your guess:");
-           String userInput = scanner.nextLine();
-           if (isInputValid(userInput)) {
-               userNumber = Integer.parseInt(userInput);
-               if (userNumber > randomNumber) {
-                   System.out.println("Too high!");
-               } else if (userNumber < randomNumber) {
-                   System.out.println("Too low!");
-               } else {
-                   System.out.println("Congratulations! You got it right!");
-               }
-           }
-       } while (userNumber != randomNumber);
+        while (true) {
+            System.out.print("Enter the lower bound: ");
+            String lowerBoundInput = scanner.nextLine();
+            System.out.print("Enter the upper bound: ");
+            String upperBoundInput = scanner.nextLine();
+
+            if (isValidNumber(lowerBoundInput) && isValidNumber(upperBoundInput)) {
+                int lowerBoundValue = Integer.parseInt(lowerBoundInput);
+                int upperBoundValue = Integer.parseInt(upperBoundInput);
+
+                if (isGuessingRangeValid(lowerBoundValue, upperBoundValue)) {
+                    break;
+                }
+            } else {
+                System.out.println("Please enter valid numbers.");
+            }
+        }
+
+        targetNumber = generateRandomNumber(lowerBound, upperBound);
+        System.out.println("A random number has been generated. Start guessing!");
+
+        while (true) {
+            System.out.print("Enter your guess: ");
+            String userGuessInput = scanner.nextLine();
+
+            if (isValidNumber(userGuessInput)) {
+                // The user's current guess
+                int userGuess = Integer.parseInt(userGuessInput);
+                System.out.println(processUserGuess(userGuess));
+                if (userGuess == targetNumber) {
+                    System.out.println("Congratulations! You guessed the number in " + numberOfAttempts + " attempts.");
+                    break;
+                }
+            }
+        }
     }
 
-    private boolean isInputValid(String input) {
-        try {
-            int number = Integer.parseInt(input);
-            if (number >= 0 && number <= 100) {
-                return true;
+    private String processUserGuess(int guess) {
+        numberOfAttempts++;
+        if (guess >= lowerBound && guess <= upperBound) {
+            if (guess > targetNumber) {
+                return "Too high!";
+            } else if (guess < targetNumber) {
+                return "Too low!";
             } else {
-                System.out.println("Invalid input!");
+                return "You got it!";
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input!");
+        } else {
+            return "Your guess is out of the specified range!";
         }
-        return false;
+    }
+
+    private boolean isValidNumber(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a valid number.");
+            return false;
+        }
+    }
+
+    private int generateRandomNumber(int min, int max) {
+        return (int) (Math.random() * (max - min + 1)) + min;
+    }
+
+    private boolean isGuessingRangeValid(int min, int max) {
+        if (max > min) {
+            lowerBound = min;
+            upperBound = max;
+            return true;
+        } else {
+            System.out.println("Invalid range! The upper bound must be greater than the lower bound.");
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        NumberGuessingGame game = new NumberGuessingGame();
+        game.startGame();
     }
 }
